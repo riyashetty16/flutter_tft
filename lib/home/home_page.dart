@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -17,24 +19,56 @@ class _HomePageState extends State<HomePage> {
   late DateTime _now;
   Timer? _timer;
 
-  double currentSpeed = 54;
+  double currentSpeed = 0;
+
+  Process? _candump;
+  StreamSubscription? _canSub;
 
   @override
   void initState() {
     super.initState();
     _now = DateTime.now();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) {
-        setState(() {
-          _now = DateTime.now();
-        });
-      }
+      if (mounted) setState(() => _now = DateTime.now());
     });
+    _startCan();
+  }
+
+  Future<void> _startCan() async {
+    try {
+      await Process.run('sudo', ['ip', 'link', 'set', 'can1', 'up', 'type', 'can', 'bitrate', '500000']);
+      await Process.run('sudo', ['ifconfig', 'can1', 'txqueuelen', '65536']);
+      _candump = await Process.start('candump', ['can1']);
+      _canSub = _candump!.stdout
+          .transform(utf8.decoder)
+          .transform(const LineSplitter())
+          .listen(_onCanLine);
+    } catch (_) {}
+  }
+
+  void _onCanLine(String line) {
+    // Format: "  can1  123   [8]  00 C0 23 91 4C B4 18 35"
+    final parts = line.trim().split(RegExp(r'\s+'));
+    if (parts.length < 4) return;
+    int byteStart = -1;
+    for (int i = 0; i < parts.length; i++) {
+      if (RegExp(r'^\[\d+\]$').hasMatch(parts[i])) {
+        byteStart = i + 1;
+        break;
+      }
+    }
+    if (byteStart < 0 || byteStart >= parts.length) return;
+    final speed = int.tryParse(parts[byteStart], radix: 16);
+    if (speed != null && mounted) {
+      setState(() => currentSpeed = speed.toDouble());
+    }
   }
 
   @override
   void dispose() {
     _timer?.cancel();
+    _canSub?.cancel();
+    _candump?.kill();
     super.dispose();
   }
 
@@ -683,32 +717,32 @@ class _DashboardView extends StatelessWidget {
           children: [
 
             /// SMALL REGEN PLATE
-          Positioned(
-          right: 195,
-          bottom: 30,
-          width: 140,
-          height: 45,
-          child: ClipPath(
-            clipper: const _HudPlateClipper(),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [
-                    Color(0xFF0B0B0B),  // deep black start
-                    Color(0xFF2A2A2A),  // dark metallic grey
-                    Color(0xFF3F3F3F),  // transition grey
-                    Color(0xFF8C0000),  // red fade
-                    Color(0xFFFF1A1A),  // red highlight
-                    Color(0xFF8C0000),  // metallic grey tip
-                  ],
-                  stops: [0.0, 0.28, 0.45, 0.65, 0.82, 1.0],
+            Positioned(
+              right: 195,
+              bottom: 30,
+              width: 140,
+              height: 45,
+              child: ClipPath(
+                clipper: const _HudPlateClipper(),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: [
+                        Color(0xFF0B0B0B),  // deep black start
+                        Color(0xFF2A2A2A),  // dark metallic grey
+                        Color(0xFF3F3F3F),  // transition grey
+                        Color(0xFF8C0000),  // red fade
+                        Color(0xFFFF1A1A),  // red highlight
+                        Color(0xFF8C0000),  // metallic grey tip
+                      ],
+                      stops: [0.0, 0.28, 0.45, 0.65, 0.82, 1.0],
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
             /// BOTTOM CONTENT ROW
             Positioned(
               left: 0,
@@ -858,11 +892,11 @@ class _DashboardView extends StatelessWidget {
     return Transform.translate(
         offset: const Offset(0, -8), // move upward (adjust if needed)
         child: SizedBox(
-      width: 90,
-      height: 24,
-      child: CustomPaint(
-        painter: _SlantedMarksPainter(color: _panelText.withValues(alpha: 0.9)),
-      ),
+          width: 90,
+          height: 24,
+          child: CustomPaint(
+            painter: _SlantedMarksPainter(color: _panelText.withValues(alpha: 0.9)),
+          ),
         )
     );
   }
@@ -1030,4 +1064,3 @@ class _AttackButtonClipper extends CustomClipper<Path> {
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
-
