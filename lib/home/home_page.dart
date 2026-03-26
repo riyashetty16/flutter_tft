@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../battery/battery_health_page.dart';
 import '../cells/cells_page.dart';
 import '../charging/charging_page.dart';
 
@@ -167,7 +168,7 @@ class _DashboardView extends StatelessWidget {
           _topRow(context),
           _leftRail(),
           _speedCluster(),
-          _rightPanel(),
+          _rightPanel(context),
           _redPowerBar(),
           _bottomBars(),
         ],
@@ -462,7 +463,7 @@ class _DashboardView extends StatelessWidget {
     );
   }
 
-  Widget _rightPanel() {
+  Widget _rightPanel(BuildContext context) {
     return Positioned(
       right: 35,   // move slightly closer to screen edge
       top: 170,     // lower slightly so it aligns with speed digits
@@ -550,33 +551,50 @@ class _DashboardView extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-              /// BATTERY LABEL
-              Text(
-                "BATTERY",
-                style: TextStyle(
-                  color: _panelText.withValues(alpha: 0.9),
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.5,
-                ),
-              ),
-
-              const SizedBox(height: 4),
-
-              /// BATTERY VALUE
-              Row(
-                children: [
-                  const Icon(Icons.bolt, color: _green, size: 22),
-                  const SizedBox(width: 6),
-                  Text(
-                    "$batteryPercent%",
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
+              /// BATTERY (tap to open Battery Health)
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => const BatteryHealthPage(),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "BATTERY",
+                          style: TextStyle(
+                            color: _panelText.withValues(alpha: 0.9),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            const Icon(Icons.bolt, color: _green, size: 22),
+                            const SizedBox(width: 6),
+                            Text(
+                              "$batteryPercent%",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
             ],
           ),

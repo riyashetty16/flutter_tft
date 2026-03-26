@@ -327,7 +327,7 @@ class _CellsContent extends StatelessWidget {
 
   final _valueStyle = const TextStyle(
     color: Colors.white,
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: FontWeight.w800,
   );
 
@@ -349,6 +349,20 @@ class _CellsContent extends StatelessWidget {
               top: 92,
               child: _VoltagePill(text: '3.68V'),
             ),
+
+            Positioned(
+              left: 330,
+              top: 92,
+              child: _VoltagePill(text: '3.73V'),
+            ),
+
+            Positioned(
+              left: 510,
+              top: 92,
+              child: _VoltagePill(text: '3.65V'),
+            ),
+
+
             Positioned(
               left: 170,
               top: 190,
@@ -360,7 +374,7 @@ class _CellsContent extends StatelessWidget {
               child: Text('MIN: 3.63 V', style: _valueStyle),
             ),
             Positioned(
-              left: 520,
+              left: 400,
               top: 190,
               child: RichText(
                 text: TextSpan(
@@ -376,7 +390,7 @@ class _CellsContent extends StatelessWidget {
               ),
             ),
             Positioned(
-              left: 520,
+              left: 400,
               top: 250,
               child: Text('Dynamic Voltage: 74.2 V', style: _valueStyle),
             ),
@@ -417,7 +431,7 @@ class _BatteryContent extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Spacer above the two columns
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -438,12 +452,12 @@ class _BatteryContent extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
                     Text(
                       'Battery Current: 16.4 A',
                       style: _valueStyle,
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
                     Text(
                       'Initial Battery Capacity: 4.8 kWh',
                       style: _valueStyle,
@@ -461,7 +475,7 @@ class _BatteryContent extends StatelessWidget {
                       'Battery Voltage: 74.6V',
                       style: _valueStyle,
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
                     RichText(
                       text: TextSpan(
                         style: _labelStyle,
@@ -474,7 +488,7 @@ class _BatteryContent extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
                     RichText(
                       text: TextSpan(
                         style: _labelStyle,
@@ -523,7 +537,7 @@ class _MotorContent extends StatelessWidget {
     return Positioned.fill(
       left: 190,
       child: Padding(
-        padding: const EdgeInsets.only(top: 110),
+        padding: const EdgeInsets.only(top: 150),
         child: Column(
           children: [
             const Text(
@@ -544,15 +558,15 @@ class _MotorContent extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Motor Current: 810 RPM', style: _valueStyle),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 16),
                     Text('Duty Cycle: 69%', style: _valueStyle),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 16),
                     Text('Wh charged: 1,512 Wh', style: _valueStyle),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 16),
                     Text('Wh used: 1,438 Wh', style: _valueStyle),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 16),
                     Text('Ah used: 19.9 Ah', style: _valueStyle),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 16),
                     Text('Ah hours charged: 20.7 Ah', style: _valueStyle),
                   ],
                 ),
@@ -562,7 +576,7 @@ class _MotorContent extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Input Current: 84.7 A', style: _valueStyle),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 16),
                     RichText(
                       text: TextSpan(
                         style: _valueStyle,
@@ -575,7 +589,7 @@ class _MotorContent extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 16),
                     RichText(
                       text: TextSpan(
                         style: _valueStyle,
@@ -588,7 +602,7 @@ class _MotorContent extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 16),
                     Text('Tachometer value: 800 RPM', style: _valueStyle),
                   ],
                 ),
@@ -678,7 +692,7 @@ class _ErrorInfoContent extends StatelessWidget {
     return Positioned.fill(
       left: 190,
       child: Padding(
-        padding: const EdgeInsets.only(top: 110, left: 60, right: 60),
+        padding: const EdgeInsets.only(top: 140, left: 60, right: 60),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
